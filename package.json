@@ -1,0 +1,28 @@
+{
+  "name": "titanbay-technical",
+  "version": "1.0.0",
+  "description": "Titanbay Private Markets API - Backend service for managing private market funds and investor commitments",
+  "main": "dist/index.js",
+  "scripts": {
+    "predev": "docker compose up -d && node scripts/wait-for-db.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "migrate": "ts-node src/db/migrate.ts",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "zod": "^3.22.4",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "@types/pg": "^8.10.9",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.2"
+  }
+}
