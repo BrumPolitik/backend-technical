@@ -60,6 +60,8 @@ export function errorHandler(
   }
 
   // Unexpected errors → 500
-  console.error("[error]", err);
+  if (process.env.NODE_ENV !== "test") {
+    console.error("[error]", err);
+  }
   res.status(500).json({ error: "Internal server error." });
 }
