@@ -1,4 +1,4 @@
-# Titanbay Technical — Private Markets API
+# Technical — Private Markets API
 
 A RESTful backend service for managing private market funds, investors, and their investments.
 
