@@ -34,17 +34,15 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
       throw new AppError(400, "Invalid fund_id — must be a UUID");
     }
 
-    // TODO: verify the fund exists first, then return its investments
-    // Example:
-    //   const fund = await pool.query("SELECT id FROM funds WHERE id = $1", [fund_id]);
-    //   if (fund.rowCount === 0) throw new AppError(404, "Fund not found");
-    //
-    //   const { rows } = await pool.query<Investment>(
-    //     "SELECT * FROM investments WHERE fund_id = $1 ORDER BY investment_date DESC",
-    //     [fund_id]
-    //   );
-    //   res.json(rows);
-    res.status(501).json({ error: "Not implemented" });
+    const fund = await pool.query("SELECT id FROM funds WHERE id = $1", [fund_id]);
+    if (fund.rowCount === 0) throw new AppError(404, "Fund not found");
+
+    const { rows } = await pool.query<Investment>(
+      "SELECT * FROM investments WHERE fund_id = $1 ORDER BY investment_date DESC",
+      [fund_id]
+    );
+    res.json(rows);
+
   } catch (err) {
     next(err);
   }
@@ -64,18 +62,24 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const body = CreateInvestmentSchema.parse(req.body);
 
-    // TODO: optionally verify both the fund and investor exist before inserting,
-    // though the FK constraints will catch it regardless (→ 422 from error handler).
-    //
-    // Example:
-    //   const { rows } = await pool.query<Investment>(
-    //     `INSERT INTO investments (investor_id, fund_id, amount_usd, investment_date)
-    //      VALUES ($1, $2, $3, $4)
-    //      RETURNING *`,
-    //     [body.investor_id, fund_id, body.amount_usd, body.investment_date]
-    //   );
-    //   res.status(201).json(rows[0]);
-    res.status(501).json({ error: "Not implemented" });
+    const { rows: existence } = await pool.query<{ fund_exists: boolean; investor_exists: boolean }>(
+        `SELECT
+           EXISTS(SELECT 1 FROM funds     WHERE id = $1) AS fund_exists,
+           EXISTS(SELECT 1 FROM investors WHERE id = $2) AS investor_exists`,
+        [fund_id, body.investor_id]
+    );
+
+    if (!existence[0].fund_exists)     throw new AppError(404, "Fund not found");
+    if (!existence[0].investor_exists) throw new AppError(404, "Investor not found");
+
+    const { rows } = await pool.query<Investment>(
+        `INSERT INTO investments (investor_id, fund_id, amount_usd, investment_date)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+        [body.investor_id, fund_id, body.amount_usd, body.investment_date]
+    );
+    res.status(201).json(rows[0]);
+
   } catch (err) {
     next(err);
   }

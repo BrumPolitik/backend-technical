@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import pool from "../db";
 import { AppError } from "../middleware/errorHandler";
-import { Fund } from "../types";
+import {Fund, Investment} from "../types";
 
 const router = Router();
 
@@ -23,7 +23,7 @@ const CreateFundSchema = z.object({
   status: FundStatusSchema,
 });
 
-const UpdateFundSchema = CreateFundSchema.extend({
+const AccessFundSchema = CreateFundSchema.extend({
   id: z.string().uuid("id must be a valid UUID"),
 });
 
@@ -36,31 +36,6 @@ router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
       "SELECT * FROM funds ORDER BY created_at DESC"
     );
     res.json(rows);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// ============================================================
-// GET /funds/:id — get a single fund by UUID
-// ============================================================
-router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-
-    // Validate that the path param is a UUID before hitting the DB
-    const parsed = z.string().uuid("id must be a valid UUID").safeParse(id);
-    if (!parsed.success) {
-      throw new AppError(400, "Invalid fund id — must be a UUID");
-    }
-
-    const { rows } = await pool.query<Fund>(
-      "SELECT * FROM funds WHERE id = $1",
-      [id]
-    );
-    if (rows.length === 0) throw new AppError(404, "Fund not found");
-    res.json(rows[0]);
-
   } catch (err) {
     next(err);
   }
@@ -90,7 +65,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 // ============================================================
 router.put("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const body = UpdateFundSchema.parse(req.body);
+    const body = AccessFundSchema.parse(req.body);
 
     const { rows } = await pool.query<Fund>(
       `UPDATE funds
@@ -106,5 +81,32 @@ router.put("/", async (req: Request, res: Response, next: NextFunction) => {
     next(err);
   }
 });
+
+// ============================================================
+// GET /funds/:id — get a single fund by UUID
+// ============================================================
+router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    // Validate that the path param is a UUID before hitting the DB
+    const parsed = z.string().uuid("id must be a valid UUID").safeParse(id);
+    if (!parsed.success) {
+      throw new AppError(400, "Invalid fund id — must be a UUID");
+    }
+
+    const { rows } = await pool.query<Fund>(
+        "SELECT * FROM funds WHERE id = $1",
+        [id]
+    );
+    if (rows.length === 0) throw new AppError(404, "Fund not found");
+    res.json(rows[0]);
+
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 
 export default router;
