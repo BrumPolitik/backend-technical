@@ -23,13 +23,12 @@ const CreateInvestorSchema = z.object({
 // ============================================================
 router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    // TODO: query the investors table and return all rows
-    // Example:
-    //   const { rows } = await pool.query<Investor>(
-    //     "SELECT * FROM investors ORDER BY created_at DESC"
-    //   );
-    //   res.json(rows);
-    res.status(501).json({ error: "Not implemented" });
+
+    const { rows } = await pool.query<Investor>(
+      "SELECT * FROM investors ORDER BY created_at DESC"
+    );
+    res.json(rows);
+
   } catch (err) {
     next(err);
   }
@@ -42,20 +41,14 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = CreateInvestorSchema.parse(req.body);
 
-    // TODO: insert into investors table and return the created row
-    // The email column has a UNIQUE constraint — pg will throw a 23505
-    // error if a duplicate is submitted, which the error handler converts
-    // to a 409 Conflict automatically.
-    //
-    // Example:
-    //   const { rows } = await pool.query<Investor>(
-    //     `INSERT INTO investors (name, investor_type, email)
-    //      VALUES ($1, $2, $3)
-    //      RETURNING *`,
-    //     [body.name, body.investor_type, body.email]
-    //   );
-    //   res.status(201).json(rows[0]);
-    res.status(501).json({ error: "Not implemented" });
+    const { rows } = await pool.query<Investor>(
+      `INSERT INTO investors (name, investor_type, email)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [body.name, body.investor_type, body.email]
+    );
+    res.status(201).json(rows[0]);
+
   } catch (err) {
     next(err);
   }
