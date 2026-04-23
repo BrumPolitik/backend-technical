@@ -16,10 +16,8 @@ const CreateInvestmentSchema = z.object({
   investor_id: z.string().uuid("investor_id must be a valid UUID"),
   amount_usd: z.number().positive("amount_usd must be positive"),
   // Accepts ISO date strings like "2024-03-15"
-  investment_date: z.string().regex(
-    /^\d{4}-\d{2}-\d{2}$/,
-    "investment_date must be in YYYY-MM-DD format"
-  ),
+  investment_date: z.string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "investment_date must be in YYYY-MM-DD format"),
 });
 
 // ============================================================

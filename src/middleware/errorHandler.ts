@@ -48,6 +48,17 @@ export function errorHandler(
     return;
   }
 
+  // PostgreSQL date time parse error violation (code 22008) → 422 Unprocessable Data
+  if (
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      (err as { code: string }).code === "22008"
+  ) {
+    res.status(422).json({ error: "Investment_date is not a valid calendar date." });
+    return;
+  }
+
   // PostgreSQL foreign-key violation (code 23503) → 422 Unprocessable
   if (
     typeof err === "object" &&

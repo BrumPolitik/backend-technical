@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 import express from "express";
-import investorsRouter from "../routers/investors";
-import { errorHandler } from "../middleware/errorHandler";
-import pool from "../db";
+import investorsRouter from "../../routers/investors";
+import { errorHandler } from "../../middleware/errorHandler";
+import pool from "../../db";
 
-vi.mock("../db");
+vi.mock("../../db");
 
 const mockedQuery = pool.query as ReturnType<typeof vi.fn>;
 

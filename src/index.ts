@@ -35,9 +35,4 @@ app.use((_req, res) => {
 // ── Global error handler ──────────────────────────────────────
 app.use(errorHandler);
 
-// ── Start ─────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`[server] Titanbay API running on http://localhost:${PORT}`);
-});
-
 export default app;

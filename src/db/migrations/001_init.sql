@@ -38,11 +38,7 @@ CREATE TABLE IF NOT EXISTS investments (
   investor_id      UUID        NOT NULL REFERENCES investors(id) ON DELETE RESTRICT,
   fund_id          UUID        NOT NULL REFERENCES funds(id)     ON DELETE RESTRICT,
   amount_usd       NUMERIC(20, 2) NOT NULL CHECK (amount_usd > 0),
-  investment_date  DATE        NOT NULL,
-
-  -- Prevent an investor from committing to the same fund twice.
-  -- Remove this constraint if the business allows multiple tranches.
-  UNIQUE (investor_id, fund_id)
+  investment_date  DATE        NOT NULL
 );
 
 -- Useful for the common query pattern: "all investments for a given fund"

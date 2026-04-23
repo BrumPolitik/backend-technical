@@ -5,14 +5,17 @@
   "main": "dist/index.js",
   "scripts": {
     "predev": "docker compose up -d && node scripts/wait-for-db.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "db:clean": "node scripts/clean-db.js",
     "migrate": "ts-node src/db/migrate.ts",
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
     "test:verbose": "vitest run --reporter=verbose",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:integration": "dotenv -e .env.test -- vitest run --config vitest.integration.config.ts",
+    "test:integration:verbose": "dotenv -e .env.test -- vitest run --config vitest.integration.config.ts --reporter=verbose"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
@@ -26,6 +29,7 @@
     "@types/pg": "^8.10.9",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.1.5",
+    "dotenv-cli": "^11.0.0",
     "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
