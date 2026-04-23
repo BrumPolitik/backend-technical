@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import pool from "../db";
 import { AppError } from "../middleware/errorHandler";
-import {Fund, Investment} from "../types";
+import { Fund } from "../types";
 
 const router = Router();
 

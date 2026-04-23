@@ -1,7 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import pool from "../db";
-import { AppError } from "../middleware/errorHandler";
 import { Investor } from "../types";
 
 const router = Router();
