@@ -88,7 +88,7 @@ describe("POST /funds/:fund_id/investments", () => {
 
     it("creates an investment and returns 201", async () => {
         mockedQuery
-            .mockResolvedValueOnce({ rows: [{ fund_exists: true, investor_exists: true }] })
+            .mockResolvedValueOnce({ rows: [{ fund_exists: true, investor_exists: true, vintage_year: 2024 }] })
             .mockResolvedValueOnce({ rows: [mockInvestment] });
 
         const res = await request(app).post(`/funds/${FUND_ID}/investments`).send(validBody);
@@ -176,14 +176,17 @@ describe("POST /funds/:fund_id/investments", () => {
         expect(res.status).toBe(400);
     });
 
-    it("returns 409 when investor has already committed to this fund", async () => {
-        mockedQuery
-            .mockResolvedValueOnce({ rows: [{ fund_exists: true, investor_exists: true }] })
-            .mockRejectedValueOnce({ code: "23505" });
+    it("returns 422 when investment_date is before the fund vintage year", async () => {
+        mockedQuery.mockResolvedValueOnce({
+            rows: [{ fund_exists: true, investor_exists: true, vintage_year: 2024 }],
+        });
 
-        const res = await request(app).post(`/funds/${FUND_ID}/investments`).send(validBody);
+        const res = await request(app)
+            .post(`/funds/${FUND_ID}/investments`)
+            .send({ ...validBody, investment_date: "2023-01-01" });
 
-        expect(res.status).toBe(409);
+        expect(res.status).toBe(422);
+        expect(res.body.error).toContain("vintage year");
     });
 
     it("returns 500 when the database throws", async () => {

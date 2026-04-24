@@ -209,5 +209,31 @@ describe("POST /funds/:fund_id/investments", () => {
 
             expect(res.status).toBe(422);
         });
+
+        it("returns 422 when investment_date is before the fund vintage year", async () => {
+            const res = await request(app)
+                .post(`/funds/${fundId}/investments`)
+                .send({ ...validInvestment(), investment_date: "2023-01-01" });
+
+            // fundId was created with vintage_year 2024
+            expect(res.status).toBe(422);
+            expect(res.body.error).toContain("vintage year");
+        });
+
+        it("returns 201 when investment_date is in the fund vintage year", async () => {
+            const res = await request(app)
+                .post(`/funds/${fundId}/investments`)
+                .send({ ...validInvestment(), investment_date: "2024-01-01" });
+
+            expect(res.status).toBe(201);
+        });
+
+        it("returns 201 when investment_date is after the fund vintage year", async () => {
+            const res = await request(app)
+                .post(`/funds/${fundId}/investments`)
+                .send({ ...validInvestment(), investment_date: "2025-06-15" });
+
+            expect(res.status).toBe(201);
+        });
     });
 });

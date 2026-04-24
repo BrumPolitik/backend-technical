@@ -269,3 +269,7 @@ titanbay-technical/
 **Single EXISTS query for investment validation** — when creating an investment, both the fund and investor are checked in a single query using `EXISTS(SELECT 1 FROM ...)` subqueries. This costs one round trip instead of two, and PostgreSQL can execute both subqueries in parallel.
 
 **Integration tests run sequentially with `fileParallelism: false`** — parallel test files share the same database and can produce cross-file interference (e.g. duplicate email conflicts). Sequential execution eliminates this.
+
+**`investment_date` validation checks if the date is before the vintage year of the fund** — Returns a 422 Unprocessable if so based on the assumption a fund cannot be invested into before creation
+
+**Investors can invest multiple times into the same fund** — Based on the assumption that investing multiple times in the same fund by the same investor is possible for tactics like Dollar-Cost Averaging

@@ -60,15 +60,21 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const body = CreateInvestmentSchema.parse(req.body);
 
-    const { rows: existence } = await pool.query<{ fund_exists: boolean; investor_exists: boolean }>(
+    const { rows: existence } = await pool.query<{ fund_exists: boolean; investor_exists: boolean; vintage_year: number; }>(
         `SELECT
            EXISTS(SELECT 1 FROM funds     WHERE id = $1) AS fund_exists,
-           EXISTS(SELECT 1 FROM investors WHERE id = $2) AS investor_exists`,
+           EXISTS(SELECT 1 FROM investors WHERE id = $2) AS investor_exists,
+           (SELECT vintage_year FROM funds WHERE id = $1) AS vintage_year`,
         [fund_id, body.investor_id]
     );
 
     if (!existence[0].fund_exists)     throw new AppError(404, "Fund not found");
     if (!existence[0].investor_exists) throw new AppError(404, "Investor not found");
+
+    const investmentYear = new Date(body.investment_date).getFullYear();
+    if (investmentYear < existence[0].vintage_year!) {
+      throw new AppError(422, `investment_date cannot be before the fund's vintage year (${existence[0].vintage_year})`);
+    }
 
     const { rows } = await pool.query<Investment>(
         `INSERT INTO investments (investor_id, fund_id, amount_usd, investment_date)
