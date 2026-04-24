@@ -31,12 +31,20 @@ npm install
 # 4. Initialise database and carry out migration
 npm run predev
 
-# 5. Start dev server
+# 5. Seed database with data if needed
+npm run db:seed
+
+# 6. Start dev server
 npm run dev
 ```
 `npm run predev` does two things
 1. `docker-compose up -d` — starts the PostgreSQL container
 2. `scripts/wait-for-db.js` — polls `localhost:5432` via TCP until Postgres accepts connections, then runs migrations automatically
+
+`npm run db:seed` seeds the database with premade data
+1. 6 Funds
+2. 10 Investors
+3. 24 Investments
 
 `npm run dev` runs the start command:
 3. `ts-node-dev` — starts the API on `http://localhost:3000` with hot-reload
@@ -45,19 +53,20 @@ npm run dev
 
 ## All Available Scripts
 
-| Command                            | Description                                                                  |
-|------------------------------------|------------------------------------------------------------------------------|
-| `npm run predev`                   | Spins up Docker then runs migrations                                         |
-| `npm run dev`                      | Start dev server — starts with hot-reload                                    |
-| `npm run build`                    | Compile TypeScript to `dist/`                                                |
-| `npm start`                        | Run the compiled build (no Docker management)                                |
-| `npm run migrate`                  | Run database migrations manually against the dev database                    |
-| `npm test`                         | Run unit tests with summary output only                                      |
-| `npm run test:verbose`             | Run unit tests (verbose) — no Docker required                                |
-| `npm run test:integration`         | Run integration tests with summary output only                               |
-| `npm run test:integration:verbose` | Run integration tests against a real database (verbose) — requires Docker    |
-| `npm run test:all`                 | Run unit tests then integration tests sequentially                           |
-| `npm run db:clean`                 | Truncate all tables in the dev database (useful during manual testing)       |
+| Command                            | Description                                                               |
+|------------------------------------|---------------------------------------------------------------------------|
+| `npm run predev`                   | Spins up Docker then runs migrations                                      |
+| `npm run dev`                      | Start dev server — starts with hot-reload                                 |
+| `npm run build`                    | Compile TypeScript to `dist/`                                             |
+| `npm start`                        | Run the compiled build (no Docker management)                             |
+| `npm run migrate`                  | Run database migrations manually against the dev database                 |
+| `npm test`                         | Run unit tests with summary output only                                   |
+| `npm run test:verbose`             | Run unit tests (verbose) — no Docker required                             |
+| `npm run test:integration`         | Run integration tests with summary output only                            |
+| `npm run test:integration:verbose` | Run integration tests against a real database (verbose) — requires Docker |
+| `npm run test:all`                 | Run unit tests then integration tests sequentially                        |
+| `npm run db:clean`                 | Truncate all tables in the dev database (useful during manual testing)    |
+| `npm run db:seed`                  | Seed database with premade data (useful during manual testing)            |
 
 ---
 
