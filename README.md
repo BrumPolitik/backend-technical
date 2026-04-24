@@ -18,7 +18,7 @@ Built with **TypeScript**, **Express**, and **PostgreSQL** (containerised with D
 
 ```bash
 # 1. Clone the repo
-git clone <your-repo-url>
+git clone https://github.com/BrumPolitik/backend-technical.git
 cd backend-technical
 
 # 2. Copy environment config
