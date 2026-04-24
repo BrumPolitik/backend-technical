@@ -29,14 +29,3 @@ export interface Investment {
   amount_usd: number;
   investment_date: string; // ISO date string YYYY-MM-DD
 }
-
-// ============================================================
-// Request body shapes (used by Zod schemas in each router)
-// ============================================================
-
-export type CreateFundBody = Omit<Fund, "id" | "created_at">;
-export type UpdateFundBody = Omit<Fund, "created_at">;
-
-export type CreateInvestorBody = Omit<Investor, "id" | "created_at">;
-
-export type CreateInvestmentBody = Omit<Investment, "id" | "fund_id">;

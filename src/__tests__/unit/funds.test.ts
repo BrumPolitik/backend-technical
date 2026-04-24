@@ -5,6 +5,7 @@ import fundsRouter from "../../routers/funds";
 import { errorHandler } from "../../middleware/errorHandler";
 import pool from "../../db";
 
+//Must be same as pool import to work
 vi.mock("../../db");
 
 const mockedQuery = pool.query as ReturnType<typeof vi.fn>;

@@ -18,7 +18,7 @@ const CreateFundSchema = z.object({
     .number()
     .int()
     .min(1900)
-    .max(2200),
+    .max(new Date().getFullYear()),
   target_size_usd: z.number().positive("target_size_usd must be positive"),
   status: FundStatusSchema,
 });

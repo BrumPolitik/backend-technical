@@ -5,9 +5,9 @@ dotenv.config();
 
 types.setTypeParser(1082, (val: string) => val);
 
+//Defaults based on a small scale db on a local machine
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // Sensible defaults for a local dev / small production environment
   max: 10,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 5_000,
